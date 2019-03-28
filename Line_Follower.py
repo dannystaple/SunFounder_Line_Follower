@@ -1,4 +1,5 @@
 
+from __future__ import print_function
 import smbus
 import math
 import time
@@ -21,8 +22,8 @@ class Line_Follower(object):
 		if Connection_OK:
 			return raw_result
 		else:
+			print("Error accessing %2X" % self.address)
 			return False
-			print "Error accessing %2X" % self.address
 
 	def read_analog(self):
 		raw_result = self.read_raw()
@@ -98,4 +99,4 @@ class Line_Follower(object):
 if __name__ == '__main__':
 	lf = Line_Follower()
 	while True:
-		print lf.read_analog()
+		print(lf.read_analog())
