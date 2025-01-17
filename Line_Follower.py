@@ -22,17 +22,22 @@ class Line_Follower(object):
 			return raw_result
 		else:
 			return False
-			print "Error accessing %2X" % self.address
+			print("Error accessing %2X" % self.address)
 
-	def read_analog(self):
-		raw_result = self.read_raw()
-		if raw_result:
-			analog_result = [0, 0, 0, 0, 0]
-			for i in range(0, 5):
-				high_byte = raw_result[i*2] << 8
-				low_byte = raw_result[i*2+1]
-				analog_result[i] = high_byte + low_byte
-			return analog_result
+	def read_analog(self, trys=5):
+		for _ in range(trys):
+			raw_result = self.read_raw()
+			if raw_result:
+				analog_result = [0, 0, 0, 0, 0]
+				for i in range(0, 5):
+					high_byte = raw_result[i*2] << 8
+					low_byte = raw_result[i*2+1]
+					analog_result[i] = high_byte + low_byte
+					if analog_result[i] > 1024:
+						continue
+				return analog_result
+		else:
+			raise IOError("Line follower read error. Please check the wiring.")
 
 	def read_digital(self):	
 		lt = self.read_analog()
@@ -98,4 +103,4 @@ class Line_Follower(object):
 if __name__ == '__main__':
 	lf = Line_Follower()
 	while True:
-		print lf.read_analog()
+		print(lf.read_analog())
