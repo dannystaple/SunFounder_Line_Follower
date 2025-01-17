@@ -3,6 +3,7 @@ from __future__ import print_function
 import smbus
 import math
 import time
+import logging
 
 class Line_Follower(object):
 	def __init__(self, address=0x11, references=[300, 300, 300, 300, 300]):
@@ -16,14 +17,14 @@ class Line_Follower(object):
 				raw_result = self.bus.read_i2c_block_data(self.address, 0, 10)
 				Connection_OK = True
 				break
-			except:
+			except IOError:
+				logging.exception('Error reading')
 				Connection_OK = False
 
 		if Connection_OK:
 			return raw_result
 		else:
-			print("Error accessing %2X" % self.address)
-			return False
+			raise RuntimeError("Error accessing %2X" % self.address)
 
 	def read_analog(self):
 		raw_result = self.read_raw()
